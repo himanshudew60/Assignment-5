@@ -1,24 +1,209 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>User App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-dim: #64748b;
+        }
+
+        /* Prevent page-level scrolling */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+        }
+
+        body {
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* LEFT SIDE: User List Section */
+        .list-section {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .list-header {
+            margin-bottom: 24px;
+        }
+
+        .list-header h2 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        /* Internal scroll for list only */
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Hide scrollbar for Chrome/Safari but keep functionality */
+        .scroll-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .user-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            border-color: var(--primary-light);
+        }
+
+        .user-name {
+            display: block;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .user-email {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        /* RIGHT SIDE: Sidebar Form */
+        .form-sidebar {
+            width: 400px;
+            background: var(--card-bg);
+            border-left: 1px solid #e2e8f0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: -10px 0 15px -3px rgba(0,0,0,0.02);
+        }
+
+        .form-sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .form-sidebar p {
+            color: var(--text-dim);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            body { flex-direction: column; overflow: auto; }
+            .form-sidebar { width: 100%; border-left: none; border-top: 1px solid #e2e8f0; }
+            .list-section { height: auto; }
+        }
+    </style>
 </head>
 <body>
-<h1>Add User</h1>
 
-<form action="/add-user" method="POST">
-    <input name="name" placeholder="Name" required />
-    <input name="email" type="email" placeholder="Email" required />
-    <input name="password" type="password" placeholder="Password" required />
-    <button type="submit">Add User</button>
-</form>
+    <section class="list-section">
+        <div class="list-header">
+            <h2>Community Members</h2>
+        </div>
+        
+        <div class="scroll-area">
+            <div class="user-grid">
+                <% if (users && users.length > 0) { %>
+                    <% users.forEach(user => { %>
+                        <div class="user-card">
+                            <span class="user-name"><%= user.name %></span>
+                            <span class="user-email"><%= user.email %></span>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p style="color: var(--text-dim)">No members found. Add the first one!</p>
+                <% } %>
+            </div>
+        </div>
+    </section>
 
-<h2>All Users</h2>
-<ul>
-    <% users.forEach(user => { %>
-        <li><%= user.name %> - <%= user.email %></li>
-    <% }) %>
-</ul>
+    <aside class="form-sidebar">
+        <h1>Add User</h1>
+        <p>Enter details to register a new member to the platform.</p>
+
+        <form action="/add-user" method="POST">
+            <input name="name" placeholder="Full Name" required />
+            <input name="email" type="email" placeholder="Email Address" required />
+            <input name="password" type="password" placeholder="Password" required />
+            <button type="submit">Register User</button>
+        </form>
+    </aside>
 
 </body>
 </html>
