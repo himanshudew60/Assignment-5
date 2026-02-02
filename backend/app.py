@@ -7,7 +7,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-MONGO_URI = os.getenv("MONGO_URI")
+MONGO_URI = 'mongodb+srv://sample:sample%40123@cluster0.dhoae18.mongodb.net/?appName=Cluster0'
 client = MongoClient(MONGO_URI)
 db = client.dockeruser
 collection = db.users
@@ -32,4 +32,7 @@ def get_users():
     return jsonify(users)
 
 if __name__ == "__main__":
+    print("Backend running successfully on port 5000")
     app.run(host="0.0.0.0", port=5000)
+
+
